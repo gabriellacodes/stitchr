@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import Project
+from .models import Project, Pledge
 
-# ACTION: Do I need to update these when my models file is updated?
+# ACTION: Do I need to update these when my models file is updated? Yes I do... fix this later
 class StitchrSerializer(serializers.Serializer):
     id = serializers.ReadOnlyField()
     title = serializers.CharField(max_length=200)
@@ -14,3 +14,18 @@ class StitchrSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         return Project.objects.create(**validated_data)
+
+class PledgeSerializer(serializers.Serializer):
+    id = serializers.ReadOnlyField()
+    amount = serializers.IntegerField()
+    comment = serializers.CharField(max_length=200)
+    anonymous = serializers.BooleanField()
+    supporter = serializers.CharField(max_length=200)
+    project_id = serializers.IntegerField()
+    
+    def create(self, validated_data):
+        return Pledge.objects.create(**validated_data)
+
+class ProjectDetailSerializer(StitchrSerializer):
+    pledges = PledgeSerializer(many=True, read_only=True)
+

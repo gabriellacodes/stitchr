@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     path('stitchr/', views.StitchrList.as_view()),
     path('stitchr/<int:pk>/', views.StitchrDetail.as_view()),
+    path('pledges/', views.PledgeList.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
