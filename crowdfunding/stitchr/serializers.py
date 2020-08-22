@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Project, Pledge
 
-# ACTION: Do I need to update these when my models file is updated? Yes I do... fix this later
+# This is 
 class StitchrSerializer(serializers.Serializer):
     id = serializers.ReadOnlyField()
     title = serializers.CharField(max_length=200)
@@ -10,7 +10,9 @@ class StitchrSerializer(serializers.Serializer):
     image = serializers.URLField()
     is_open = serializers.BooleanField()
     date_created = serializers.DateTimeField()
-    owner = serializers.CharField(max_length=200)
+    owner = serializers.ReadOnlyField(source='owner.id')
+    # size_avail_mens = serializers.ChoiceField(['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'])
+    # size_avail_womens = serializers.ChoiceField(['6', '8', '10', '12', '14', '16', '18', '20'])
 
     def create(self, validated_data):
         return Project.objects.create(**validated_data)

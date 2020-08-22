@@ -1,6 +1,6 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
-# ACTION: amend these later to what models I need for the website
 class Project(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
@@ -8,7 +8,27 @@ class Project(models.Model):
     image = models.URLField()
     is_open = models.BooleanField()
     date_created = models.DateTimeField()
-    owner = models.CharField(max_length=200)
+    owner = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        related_name='owner_projects'
+    )
+    # ACTION: how to capture gender and size selection best?
+    # gender_choice = (
+    #     ('M', 'Mens'),
+    #     ('F', 'Womens'),
+    # )
+    # gender_selection = models.CharField(max_length=1, choices = gender_choice)
+    # size_choice = (
+    #     ('XXS','Extra extra small'),
+    #     ('XS','Extra small'),
+    #     ('S','Small'),
+    #     ('M','Medium'),
+    #     ('L','Large'),
+    #     ('XL','Extra large'),
+    #     ('XXL','Extra extra large'),
+    #     )
+    # size_selection = models.CharField(max_length=3, choices = size_choice)
 
 class Pledge(models.Model):
     amount = models.IntegerField()
@@ -19,4 +39,8 @@ class Pledge(models.Model):
         on_delete=models.CASCADE,
         related_name='pledges'
     )
-    supporter = models.CharField(max_length=200)
+    supporter = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        related_name='supporter_pledges'
+    )
