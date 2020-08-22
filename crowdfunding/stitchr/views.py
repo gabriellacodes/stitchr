@@ -4,9 +4,12 @@ from rest_framework.response import Response
 from .models import Project, Pledge
 from .serializers import StitchrSerializer, PledgeSerializer, ProjectDetailSerializer
 from django.http import Http404
-from rest_framework import status
+from rest_framework import status, permissions
+from .permissions import IsOwnerOrReadOnly
 
 class StitchrList(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
     def get(self, request):
         projects = Project.objects.all()
         serializer = StitchrSerializer(projects, many=True)
@@ -26,6 +29,8 @@ class StitchrList(APIView):
         )
 
 class StitchrDetail(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
     def get_object(self, pk):
         try:
             return Project.objects.get(pk=pk)
@@ -36,6 +41,17 @@ class StitchrDetail(APIView):
         project = self.get_object(pk)
         serializer = ProjectDetailSerializer(project)
         return Response(serializer.data)
+
+    def put(self, request, pk):
+        project = self.get_object(pk)
+        data = request.data
+        serializer = ProjectDetailSerializer(
+            instance=project,
+            data=data,
+            partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
 
 class PledgeList(APIView):
     def get(self, request):
