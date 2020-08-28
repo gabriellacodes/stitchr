@@ -7,12 +7,13 @@ class Project(models.Model):
     image = models.URLField()
     is_open = models.BooleanField()
     date_created = models.DateTimeField()
+    category = models.CharField(max_length=100)
     owner = models.ForeignKey(
         get_user_model(),
         on_delete=models.CASCADE,
         related_name='owner_projects'
     )
-
+    
     # ACTION: how to capture gender and size selection best?
     # gender_choice = (
     #     ('M', 'Mens'),
