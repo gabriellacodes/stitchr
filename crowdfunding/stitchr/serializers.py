@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from .models import Project, Pledge
+from .models import Project, Likes
 
 # This is 
 class StitchrSerializer(serializers.Serializer):
     id = serializers.ReadOnlyField()
     title = serializers.CharField(max_length=200)
     description = serializers.CharField(max_length=None)
-    goal = serializers.IntegerField()
+    # goal = serializers.IntegerField()
     image = serializers.URLField()
     is_open = serializers.BooleanField()
     date_created = serializers.DateTimeField()
@@ -17,7 +17,7 @@ class StitchrSerializer(serializers.Serializer):
     def create(self, validated_data):
         return Project.objects.create(**validated_data)
 
-class PledgeSerializer(serializers.Serializer):
+class LikesSerializer(serializers.Serializer):
     id = serializers.ReadOnlyField()
     amount = serializers.IntegerField()
     comment = serializers.CharField(max_length=200)
@@ -26,10 +26,10 @@ class PledgeSerializer(serializers.Serializer):
     project_id = serializers.IntegerField()
     
     def create(self, validated_data):
-        return Pledge.objects.create(**validated_data)
+        return Likes.objects.create(**validated_data)
 
 class ProjectDetailSerializer(StitchrSerializer):
-    pledges = PledgeSerializer(many=True, read_only=True)
+    likes = LikesSerializer(many=True, read_only=True)
     
     def update(self, instance, validated_data):
         instance.title = validated_data.get('title', instance.title)
