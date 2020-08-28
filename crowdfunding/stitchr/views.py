@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Project, Pledge
-from .serializers import StitchrSerializer, PledgeSerializer, ProjectDetailSerializer
+from .models import Project, Likes
+from .serializers import StitchrSerializer, LikesSerializer, ProjectDetailSerializer
 from django.http import Http404
 from rest_framework import status, permissions
 from .permissions import IsOwnerOrReadOnly
@@ -53,14 +53,14 @@ class StitchrDetail(APIView):
         if serializer.is_valid():
             serializer.save()
 
-class PledgeList(APIView):
+class LikesList(APIView):
     def get(self, request):
-        pledges = Pledge.objects.all()
-        serializer = PledgeSerializer(pledges, many=True)
+        likes = Likes.objects.all()
+        serializer = LikesSerializer(likes, many=True)
         return Response(serializer.data)
         
     def post(self, request):
-        serializer = PledgeSerializer(data=request.data)
+        serializer = LikesSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(
