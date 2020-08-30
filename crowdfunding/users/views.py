@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from .forms import CustomUserChangeForm
 from .models import CustomUser, UserProfile
-from .serializers import CustomUserSerializer
+from .serializers import CustomUserSerializer, UserProfileSerializer
 # import logging
 # logger = logging.getLogger(__name__)
 
@@ -39,8 +39,13 @@ class CustomUserDetail(APIView):
         
     def get(self, request, pk):
         user = self.get_object(pk)
-        serializer = CustomUserSerializer(user)
-        return Response(serializer.data)
+        if request.user.is_authenticated:
+            serializer = CustomUserSerializer(user)
+            return Response(serializer.data)
+        else:
+            return Response(
+                status=status.HTTP_403_FORBIDDEN
+            )
 
     # Updating user profile data
     def put(self, request, pk):
@@ -51,7 +56,7 @@ class CustomUserDetail(APIView):
             )
         user_profile = user.profile
         data = request.data
-        serializer = CustomUserSerializer(
+        serializer = UserProfileSerializer(
             instance=user_profile,
             data=data,
             partial=True

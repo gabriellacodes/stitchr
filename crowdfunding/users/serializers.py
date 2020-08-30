@@ -6,6 +6,13 @@ logger = logging.getLogger(__name__)
 class CustomUserSerializer(serializers.Serializer):
     id = serializers.ReadOnlyField()
     email = serializers.CharField(max_length=200)
+    
+    def create(self, validated_data):
+        return CustomUser.objects.create(**validated_data)
+
+class UserProfileSerializer(serializers.Serializer):
+    id = serializers.ReadOnlyField()
+    email = serializers.CharField(max_length=200)
     title = serializers.CharField(max_length=5)
     given_name = serializers.CharField(max_length=50)
     preferred_name = serializers.CharField(max_length=50)
@@ -16,9 +23,6 @@ class CustomUserSerializer(serializers.Serializer):
     country = serializers.CharField(max_length=50)
     postcode = serializers.CharField(max_length=5)
     profile_photo = serializers.ImageField()
-    
-    def create(self, validated_data):
-        return CustomUser.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         instance.title = validated_data.get('title', instance.title)
