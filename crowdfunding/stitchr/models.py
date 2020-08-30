@@ -14,12 +14,6 @@ class Project(models.Model):
         related_name='owner_projects'
     )
     
-    # ACTION: how to capture gender and size selection best?
-    # gender_choice = (
-    #     ('M', 'Mens'),
-    #     ('F', 'Womens'),
-    # )
-    # gender_selection = models.CharField(max_length=1, choices = gender_choice)
     # size_choice = (
     #     ('XXS','Extra extra small'),
     #     ('XS','Extra small'),

@@ -7,9 +7,9 @@ from .managers import CustomUserManager
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
-    is_artist = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    is_superuser = models.BooleanField(default=False)
+    is_artist = models.BooleanField('artist status', default=False, help_text=_('Designates whether the user has artist access to post projects, etc.'))
+    is_active = models.BooleanField('active', default=True, help_text=_('Designates whether this user should be treated as active. Unselect this instead of deleting accounts.'))
+    is_superuser = models.BooleanField(default=False, help_text=_('Designates if the user has full permissions to this site.'))
     date_joined = models.DateTimeField(default=timezone.now)
 
     USERNAME_FIELD = 'email'
@@ -24,9 +24,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class UserProfile(models.Model):
     customuser = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
     title = models.CharField(max_length=5)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    gender = models.CharField(max_length=10)
+    given_name = models.CharField(max_length=50)
+    preferred_name = models.CharField(max_length=50)
+    family_name = models.CharField(max_length=50)
     shirt_size = models.CharField(max_length=20)
     address = models.CharField(max_length=255)
     suburb = models.CharField(max_length=50)

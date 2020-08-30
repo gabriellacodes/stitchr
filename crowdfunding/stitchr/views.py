@@ -52,6 +52,27 @@ class StitchrDetail(APIView):
         )
         if serializer.is_valid():
             serializer.save()
+            return Response(
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    def delete(self, request, pk):
+        project = self.get_object(pk)
+        if project.owner == request.user:
+            project.delete()
+            return Response(
+                status=status.HTTP_204_NO_CONTENT
+            )
+        else:
+            return Response(
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+        # custom permissions classes - action
 
 class LikesList(APIView):
     def get(self, request):

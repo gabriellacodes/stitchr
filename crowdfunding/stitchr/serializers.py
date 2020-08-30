@@ -6,13 +6,10 @@ class StitchrSerializer(serializers.Serializer):
     id = serializers.ReadOnlyField()
     title = serializers.CharField(max_length=200)
     description = serializers.CharField(max_length=None)
-    # goal = serializers.IntegerField()
     image = serializers.URLField()
     is_open = serializers.BooleanField()
     date_created = serializers.DateTimeField()
     owner = serializers.ReadOnlyField(source='owner.id')
-    # size_avail_mens = serializers.ChoiceField(['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'])
-    # size_avail_womens = serializers.ChoiceField(['6', '8', '10', '12', '14', '16', '18', '20'])
 
     def create(self, validated_data):
         return Project.objects.create(**validated_data)
@@ -34,7 +31,6 @@ class ProjectDetailSerializer(StitchrSerializer):
     def update(self, instance, validated_data):
         instance.title = validated_data.get('title', instance.title)
         instance.description = validated_data.get('description',instance.description)
-        instance.goal = validated_data.get('goal', instance.goal)
         instance.image = validated_data.get('image', instance.image)
         instance.is_open = validated_data.get('is_open',instance.is_open)
         instance.date_created = validated_data.get('date_created',instance.date_created)

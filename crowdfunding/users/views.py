@@ -1,13 +1,20 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from .models import CustomUser
+from rest_framework import status, permissions
+from .forms import CustomUserChangeForm
+from .models import CustomUser, UserProfile
 from .serializers import CustomUserSerializer
+# import logging
+# logger = logging.getLogger(__name__)
+
 
 # viewing all list of users
 class CustomUserList(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
     def get(self, request):
         users = CustomUser.objects.all()
         serializer = CustomUserSerializer(users, many=True)
@@ -20,8 +27,10 @@ class CustomUserList(APIView):
             return Response(serializer.data)
         return Response(serializer.errors)
 
-# viewing the profile of a specific user
+# viewing/updating the profile of a specific user
 class CustomUserDetail(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
     def get_object(self, pk):
         try:
             return CustomUser.objects.get(pk=pk)
@@ -32,3 +41,28 @@ class CustomUserDetail(APIView):
         user = self.get_object(pk)
         serializer = CustomUserSerializer(user)
         return Response(serializer.data)
+
+    # Updating user profile data
+    def put(self, request, pk):
+        user = self.get_object(pk)
+        if request.user != user:
+            return Response(
+                status=status.HTTP_403_FORBIDDEN
+            )
+        user_profile = user.profile
+        data = request.data
+        serializer = CustomUserSerializer(
+            instance=user_profile,
+            data=data,
+            partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
