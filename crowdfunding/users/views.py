@@ -4,7 +4,7 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
-from .forms import CustomUserChangeForm
+from .forms import CustomUserChangeForm, CustomUserCreationForm
 from .models import CustomUser, UserProfile
 from .serializers import CustomUserSerializer, UserProfileSerializer
 # import logging
@@ -13,18 +13,33 @@ from .serializers import CustomUserSerializer, UserProfileSerializer
 
 # viewing all list of users
 class CustomUserList(APIView):
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
     def get(self, request):
+        # Permissions classes moved here to enable anyone to create an account
+        permission_classes = [permissions.IsAuthenticatedOrReadOnly]
         users = CustomUser.objects.all()
         serializer = CustomUserSerializer(users, many=True)
         return Response(serializer.data)
-        
+
+# Need to refine response for creatign a duplicate user        
     def post(self, request):
         serializer = CustomUserSerializer(data=request.data)
+        # TODO need to fix the check to ensure no duplicate user
+        # if request == CustomUser.email():
+        #     return Response(
+        #         status=status.HTTP_409_CONFLICT
+        #     )
+        # else:
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+        else:
+            Response(
+                serializer.errors,
+                status=status.HTTP_406_NOT_ACCEPTABLE
+            )
         return Response(serializer.errors)
 
 # viewing/updating the profile of a specific user

@@ -44,6 +44,10 @@ class StitchrDetail(APIView):
 
     def put(self, request, pk):
         project = self.get_object(pk)
+        if request.user != project.owner:
+            return Response(
+                status=status.HTTP_403_FORBIDDEN
+            )
         data = request.data
         serializer = ProjectDetailSerializer(
             instance=project,
