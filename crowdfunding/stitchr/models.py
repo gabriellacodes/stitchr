@@ -7,11 +7,23 @@ class Project(models.Model):
     image = models.URLField()
     is_open = models.BooleanField()
     date_created = models.DateTimeField()
+    category = models.CharField(max_length=100)
     owner = models.ForeignKey(
         get_user_model(),
         on_delete=models.CASCADE,
         related_name='owner_projects'
     )
+    
+    # size_choice = (
+    #     ('XXS','Extra extra small'),
+    #     ('XS','Extra small'),
+    #     ('S','Small'),
+    #     ('M','Medium'),
+    #     ('L','Large'),
+    #     ('XL','Extra large'),
+    #     ('XXL','Extra extra large'),
+    #     )
+    # size_selection = models.CharField(max_length=3, choices = size_choice)
 
 class Likes(models.Model):
     amount = models.IntegerField()
