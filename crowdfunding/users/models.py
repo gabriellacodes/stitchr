@@ -13,13 +13,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(default=timezone.now)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name']
+    # REQUIRED_FIELDS = ['first_name', 'last_name']
+    REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
 
     def __str__(self):
         return self.email
-
 
 class UserProfile(models.Model):
     customuser = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
