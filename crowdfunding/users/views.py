@@ -23,7 +23,7 @@ class CustomUserList(APIView):
 # Need to refine response for creatign a duplicate user        
     def post(self, request):
         serializer = CustomUserSerializer(data=request.data)
-        # TODO need to fix the check to ensure no duplicate user
+        # TODO later improvement, check to ensure no duplicate user
         # if request == CustomUser.email():
         #     return Response(
         #         status=status.HTTP_409_CONFLICT

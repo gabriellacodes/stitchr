@@ -76,9 +76,15 @@ class StitchrDetail(APIView):
             return Response(
             status=status.HTTP_401_UNAUTHORIZED
         )
-        # custom permissions classes - action
+        # later - custom permissions classes - action
 
 class LikesList(APIView):
+    def get_object(self, pk):
+        try:
+            return Likes.objects.get(pk=pk)
+        except Likes.DoesNotExist:
+            raise Http404
+
     def get(self, request):
         likes = Likes.objects.all()
         serializer = LikesSerializer(likes, many=True)
@@ -86,8 +92,9 @@ class LikesList(APIView):
         
     def post(self, request):
         serializer = LikesSerializer(data=request.data)
+        serializer.supporter = request.user
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(supporter=request.user)
             return Response(
                 serializer.data,
                 status=status.HTTP_201_CREATED
@@ -95,4 +102,16 @@ class LikesList(APIView):
         return Response(
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    def delete(self, request):
+        likes = Likes.objects.get(pk=request.data['id'])
+        if likes.supporter == request.user:
+            likes.delete()
+            return Response(
+                status=status.HTTP_204_NO_CONTENT
+            )
+        else:
+            return Response(
+            status=status.HTTP_401_UNAUTHORIZED
         )
